@@ -1,0 +1,17 @@
+# Calibrated baseliner policy for the anolishq organization.
+# Scanned weekly by .github/workflows/baseliner.yml.
+scope:
+  github:
+    type: org
+    name: anolishq
+  # This control repo is the scanner's home, not a scanned project.
+  exclude:
+    - baseliner-control
+policy:
+  base: default
+  repo_ignores:
+    # renovate-config is a 4-file Renovate preset (default.json + README + CI +
+    # CODEOWNERS) with no build output or local dependencies, so a .gitignore
+    # would be empty. Waived as not applicable.
+    "anolishq/renovate-config":
+      - gitignore_exists

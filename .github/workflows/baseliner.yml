@@ -1,0 +1,36 @@
+name: baseliner
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install baseliner
+        run: curl -fsSL https://raw.githubusercontent.com/baselinerhq/baseliner/main/scripts/install.sh | bash
+        env:
+          VERSION: v0.1.1 # pinned: reproducible + skips the latest-release API lookup
+
+      - name: Run baseliner
+        run: |
+          "$HOME/.local/bin/baseliner" scan \
+            --config baseliner.yaml \
+            --output-file results.json \
+            --format both
+        env:
+          GITHUB_TOKEN: ${{ secrets.BASELINER_TOKEN }}
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: baseliner-results
+          path: results.json
+          if-no-files-found: warn
