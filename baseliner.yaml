@@ -15,3 +15,12 @@ policy:
     # would be empty. Waived as not applicable.
     "anolishq/renovate-config":
       - gitignore_exists
+
+# Privacy guard: this control repo is public and its token can read private
+# repos. Redact private/internal repos from the public scan output (console
+# logs + results.json artifact). A no-op while the org is all-public; it takes
+# effect the moment a private repo is added. See:
+# https://baselinerhq.github.io/configuration#privacy-guard
+privacy:
+  public_context: true
+  private_repos: redact
