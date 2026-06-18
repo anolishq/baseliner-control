@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate config
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - name: Install baseliner
+        run: curl -fsSL https://raw.githubusercontent.com/baselinerhq/baseliner/main/scripts/install.sh | bash
+        env:
+          VERSION: v0.2.1 # pinned: matches the scan workflow
+
+      - name: Validate baseliner.yaml resolves
+        # `policy` resolves policy.base + repo_ignores from the local config
+        # only (no org scan, no token), so it fails fast on a malformed or
+        # invalid policy file.
+        run: "$HOME/.local/bin/baseliner" policy --config baseliner.yaml
+
+      - name: Validate renovate.json is well-formed
+        run: python3 -c "import json,sys; json.load(open('renovate.json'))"
+
+  ok:
+    name: ok
+    if: always()
+    needs:
+      - validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Evaluate job results
+        run: |
+          echo "Job results: ${{ toJSON(needs.*.result) }}"
+      - name: Fail if any required job failed or was cancelled
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1
