@@ -28,7 +28,8 @@ jobs:
         # `policy` resolves policy.base + repo_ignores from the local config
         # only (no org scan, no token), so it fails fast on a malformed or
         # invalid policy file.
-        run: "$HOME/.local/bin/baseliner" policy --config baseliner.yaml
+        run: |
+          "$HOME/.local/bin/baseliner" policy --config baseliner.yaml
 
       - name: Validate renovate.json is well-formed
         run: python3 -c "import json,sys; json.load(open('renovate.json'))"
