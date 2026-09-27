@@ -23,7 +23,6 @@ jobs:
           "$HOME/.local/bin/baseliner" scan \
             --config baseliner.yaml \
             --output-file results.json \
-            --open-issues \
             --format both
         env:
           GITHUB_TOKEN: ${{ secrets.BASELINER_TOKEN }}
