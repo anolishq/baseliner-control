@@ -22,7 +22,7 @@ jobs:
       - name: Install baseliner
         run: curl -fsSL https://raw.githubusercontent.com/baselinerhq/baseliner/main/scripts/install.sh | bash
         env:
-          VERSION: v0.2.1 # pinned: matches the scan workflow
+          VERSION: v0.2.4 # pinned: matches the scan workflow
 
       - name: Validate baseliner.yaml resolves
         # `policy` resolves policy.base + repo_ignores from the local config
