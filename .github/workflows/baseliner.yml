@@ -16,7 +16,7 @@ jobs:
       - name: Install baseliner
         run: curl -fsSL https://raw.githubusercontent.com/baselinerhq/baseliner/main/scripts/install.sh | bash
         env:
-          VERSION: v0.2.6 # pinned: reproducible + skips the latest-release API lookup
+          VERSION: v0.2.7 # pinned: reproducible + skips the latest-release API lookup
 
       # Monitor mode: findings go to each repo as a findings issue, so they do
       # not fail this run. --fail-under 0 passes any assessed repo, and
