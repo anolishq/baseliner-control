@@ -1,23 +1,36 @@
 # baseliner-control
 
-Scheduled [baseliner](https://github.com/baselinerhq/baseliner) compliance scans
-for the `anolishq` organization.
+Runs [baseliner](https://github.com/baselinerhq/baseliner) compliance scans
+across the `anolishq` organization. Both workflows pin the same baseliner
+release.
 
-- [`baseliner.yaml`](baseliner.yaml) — the calibrated org policy (one documented,
-  not-applicable waiver).
-- [`.github/workflows/baseliner.yml`](.github/workflows/baseliner.yml) — weekly
-  scan + manual `workflow_dispatch`; uploads `results.json` as an artifact.
+- [`baseliner.yaml`](baseliner.yaml) is the org policy: the `default` base
+  policy, with this repo excluded and one waiver for
+  `anolishq/renovate-config`.
+- [`.github/workflows/baseliner.yml`](.github/workflows/baseliner.yml) scans
+  every Monday at 06:00 UTC, and on manual `workflow_dispatch`. It uploads
+  `results.json` as the `baseliner-results` artifact.
+- [`.github/workflows/ci.yml`](.github/workflows/ci.yml) checks that
+  `baseliner.yaml` resolves with `baseliner policy`.
+
+## Findings
+
+The scan runs with `--open-issues`, so findings go to a findings issue in each
+scanned repo. baseliner closes the issue when the repo is compliant.
+
+The scan also runs with `--fail-under 0 --min-coverage 1.0`. Findings do not
+fail the run. A red run means the scan broke, a repo's evidence could not be
+read, or a findings issue could not be written. See
+[Control Repo](https://baselinerhq.github.io/control-repo).
 
 ## Setup
 
-Add a repository secret **`BASELINER_TOKEN`** — a fine-grained PAT with resource
-owner `anolishq`, **All repositories**, **Contents: read** + **Metadata: read**
-(add **Issues: write** only if you enable `--open-issues`). Then run from the
-**Actions** tab.
+Add a repository secret `BASELINER_TOKEN`: a fine-grained PAT with resource
+owner `anolishq`, access to all repositories, and these repository
+permissions:
 
-## Steady state
+- Metadata: Read
+- Contents: Read
+- Issues: Read and write
 
-The org is currently fully compliant (13/13 @ 1.00). To turn this into a live
-monitor that opens an issue when a repo drifts and closes it when fixed, add
-`--open-issues` to the scan step — with baseliner **v0.1.1** that is noise-free
-(issues open only on findings).
+Then run the workflow from the Actions tab.
