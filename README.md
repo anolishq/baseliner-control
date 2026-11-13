@@ -2,7 +2,9 @@
 
 Runs [baseliner](https://github.com/baselinerhq/baseliner) compliance scans
 across the `anolishq` organization. Both workflows pin the same baseliner
-release.
+release by version and SHA-256, and check its build provenance before it
+runs. Bump `VERSION` and `SHA256` together in both, taking the hash from the
+release's `checksums.txt`.
 
 - [`baseliner.yaml`](baseliner.yaml) is the org policy: the `default` base
   policy, with this repo excluded and one waiver for
